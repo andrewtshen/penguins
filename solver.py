@@ -73,9 +73,9 @@ def solve(tasks):
                 # print(score(epoch_best_ret, original))
                 global_best_score = epoch_best_score
                 global_best_ret = epoch_best_ret
-        print("TRIAL BEST:", epoch_best_score)
-    print("GLOBAL BEST:", global_best_score)
-    print(global_best_ret)
+        # print("TRIAL BEST:", epoch_best_score)
+    # print("GLOBAL BEST:", global_best_score)
+    # print(global_best_ret)
     return global_best_ret
 
 
@@ -108,7 +108,7 @@ def get_tasks(tasks):
 
 # Here's an example of how to run your solver.
 if __name__ == '__main__':
-    for input_path in os.listdir('inputs/small/')[:1]:
+    for input_path in os.listdir('inputs/small/'):
         print(input_path)
         output_path = 'outputs/small/' + input_path[:-3] + '.out'
         print(output_path)
@@ -116,19 +116,19 @@ if __name__ == '__main__':
         output = solve(tasks)
         write_output_file(output_path, output)
 
-    # for input_path in os.listdir('inputs/medium/'):
-        # print(input_path)
-        # output_path = 'outputs/medium/' + input_path[:-3] + '.out'
-        # print(output_path)
-        # tasks = read_input_file('inputs/medium/' + input_path)
-        # output = solve(tasks)
-        # write_output_file(output_path, output)
+    for input_path in os.listdir('inputs/medium/'):
+        print(input_path)
+        output_path = 'outputs/medium/' + input_path[:-3] + '.out'
+        print(output_path)
+        tasks = read_input_file('inputs/medium/' + input_path)
+        output = solve(tasks)
+        write_output_file(output_path, output)
 
-    # for input_path in os.listdir('inputs/large/'):
-        # print(input_path)
-        # output_path = 'outputs/large/' + input_path[:-3] + '.out'
-        # print(output_path)
-        # tasks = read_input_file('inputs/large/' + input_path)
-        # output = solve(tasks)
-        # write_output_file(output_path, output)
+    for input_path in os.listdir('inputs/large/'):
+        print(input_path)
+        output_path = 'outputs/large/' + input_path[:-3] + '.out'
+        print(output_path)
+        tasks = read_input_file('inputs/large/' + input_path)
+        output = solve(tasks)
+        write_output_file(output_path, output)
 
