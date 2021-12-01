@@ -10,38 +10,67 @@ def solve(tasks):
     Returns:
         output: list of igloos in order of polishing  
     """
-    best_ret = []
-    best_score = 0
+    global_best_ret = []
+    global_best_score = 0
     
     original = tasks.copy() 
-    tasks.sort(key=lambda task: 2 * task.get_max_benefit() + 1440 - task.get_deadline() + 60 - task.get_duration(), reverse=True)
 
-    # for task in tasks:
-        # print("Task:", task.get_task_id(), "| Deadline: ", task.get_deadline(), "| Duration:", task.get_duration(), "| Benefit:", task.get_max_benefit())
-    # Simulating annealing
-    temp = 20.0
-    nepochs = 100000
-    a = 0.999
-
-    for epoch in range(nepochs):
-        i = random.randint(0, len(tasks)-1)
-        j = random.randint(0, len(tasks)-1)
-        # Swap positions
-        tasks[i], tasks[j] = tasks[j], tasks[i]
+    for i in range(10):
+        epoch_best_ret = []
+        epoch_best_score = 0
+        random.shuffle(tasks)
         ret = get_tasks(tasks)
-        new_score = score(ret, original)
-        # print(new_score)
-        c = new_score - best_score
-        if c > 0 or random.uniform(0, 1) < np.exp(c/temp):
-            # print(epoch, best_score)
-            best_score = new_score
-            best_ret = ret
-        else:
-            # Swap back if rejected
+
+        # Simulating annealing
+        temp = 100.0
+        nepochs = 100000
+        a = 0.999
+        
+
+        for epoch in range(nepochs):
+            # Do the random part
+            i = random.randint(0, len(tasks)-1)
+            j = random.randint(0, len(tasks)-1)
+            # Swap positions
             tasks[i], tasks[j] = tasks[j], tasks[i]
-        temp *= a
-    print(score(best_ret, original))
-    return best_ret
+            ret = get_tasks(tasks)
+            new_score = score(ret, original)
+            c = new_score - epoch_best_score
+            if c >= 0:
+                epoch_best_score = new_score
+                epoch_best_ret = ret
+            elif c != 0 and random.uniform(0, 1) < np.exp(c/temp):
+                # print("Taking subobtimal in hopes of brighter future:", epoch, "| old best:", epoch_best_score, "|new worse: ", new_score, "| c:", c)
+                epoch_best_score = new_score
+                epoch_best_ret = ret
+            else:
+                # Swap back if rejected
+                tasks[i], tasks[j] = tasks[j], tasks[i]
+            temp *= a
+            
+            # Swap everything every 10,000 iterations
+            if epoch % 10000 == 0 and epoch != 0:
+                for i in range(len(tasks)):
+                    for j in range(len(tasks)):
+                        # Swap positions
+                        tasks[i], tasks[j] = tasks[j], tasks[i]
+                        ret = get_tasks(tasks)
+                        new_score = score(ret, original)
+                        c = new_score - epoch_best_score
+                        if c >= 0:
+                            epoch_best_score = new_score
+                            epoch_best_ret = ret
+                        else:
+                            # Swap back if rejected
+                            tasks[i], tasks[j] = tasks[j], tasks[i]
+
+            # Update global maximum if exists
+            if global_best_score < epoch_best_score:
+                print(score(epoch_best_ret, original))
+                global_best_score = epoch_best_score
+                global_best_ret = epoch_best_ret
+
+    return global_best_ret
 
 
 def score(arr, tasks):
@@ -89,11 +118,11 @@ if __name__ == '__main__':
         # output = solve(tasks)
         # write_output_file(output_path, output)
 
-    # for input_path in os.listdir('inputs/large/'):
-        # print(input_path)
-        # output_path = 'outputs/large/' + input_path[:-3] + '.out'
-        # print(output_path)
-        # tasks = read_input_file('inputs/large/' + input_path)
-        # output = solve(tasks)
-        # write_output_file(output_path, output)
+    for input_path in os.listdir('inputs/large/'):
+        print(input_path)
+        output_path = 'outputs/large/' + input_path[:-3] + '.out'
+        print(output_path)
+        tasks = read_input_file('inputs/large/' + input_path)
+        output = solve(tasks)
+        write_output_file(output_path, output)
 
