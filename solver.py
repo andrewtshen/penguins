@@ -12,7 +12,7 @@ def solve(tasks):
     """
     global_best_ret = []
     global_best_score = 0
-    ntrials = 5
+    ntrials = 10
     
     original = tasks.copy()
 
@@ -24,7 +24,7 @@ def solve(tasks):
 
         # Simulating annealing
         temp = 100.0
-        nepochs = 10000
+        nepochs = 100000
         a = 0.999
         
 
